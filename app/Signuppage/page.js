@@ -25,7 +25,7 @@ const SignUpPage = () => {
     setError(''); // Clear any previous errors
 
     // Basic validation checks
-    if (!firstname || !lastname || !username || !email || !password) {
+    if (!firstname || !lastname || !username || !email || !password || !confirmPassword) {
       setError("All fields are required");
       return;
     }
@@ -41,7 +41,7 @@ const SignUpPage = () => {
     }
 
     try {
-      const response = await axios.post('http://10.0.0.91:5000/users', {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
         username,
         password,
         first_name: firstname,

@@ -10,6 +10,7 @@ const Loginpage = () => {
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [isRememberMe, setRememberMe] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const router = useRouter();
 
   const togglePasswordVisibility = () => {
@@ -20,11 +21,14 @@ const Loginpage = () => {
     setRememberMe(!isRememberMe);
   };
 
-  // Handle login request
   const handleLogin = async () => {
+    if (!username || !password) {
+      setErrorMessage('Username and password are required');
+      return;
+    }
+
     try {
-      // Replace the IP address with your actual server URL
-      const response = await axios.post('http://10.0.0.91:5000/login', {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
         username,
         password,
       });
@@ -35,7 +39,7 @@ const Loginpage = () => {
       }
     } catch (error) {
       console.error('Login error:', error.response ? error.response.data : error.message);
-      alert('Invalid username or password');
+      setErrorMessage('Invalid username or password');
     }
   };
 
@@ -55,6 +59,11 @@ const Loginpage = () => {
         className="w-52 h-52 mb-10 object-contain"
       />
       <div className="w-full max-w-md mx-auto">
+        {errorMessage && (
+          <div className="bg-red-200 text-red-800 p-3 mb-6 rounded-lg">
+            {errorMessage}
+          </div>
+        )}
         <div className="mb-6">
           <div className="bg-white rounded-lg overflow-hidden">
             <input
@@ -63,6 +72,7 @@ const Loginpage = () => {
               className="w-full p-3 border border-gray-300 rounded-t-lg focus:outline-none"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              aria-label="Username"
             />
           </div>
         </div>
@@ -74,10 +84,12 @@ const Loginpage = () => {
               className="w-full p-3 border border-gray-300 rounded-t-lg focus:outline-none"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              aria-label="Password"
             />
             <button
               onClick={togglePasswordVisibility}
               className="absolute right-3 top-1/2 transform -translate-y-1/2"
+              aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
             >
               {isPasswordVisible ? (
                 <EyeSlashIcon className="w-6 h-6 text-gray-600" />
@@ -91,6 +103,7 @@ const Loginpage = () => {
           <button
             onClick={toggleRememberMe}
             className="flex items-center text-gray-800"
+            aria-label={isRememberMe ? 'Uncheck remember me' : 'Check remember me'}
           >
             <img
               src={isRememberMe ? "/images/checkboxon.png" : "/images/checkboxoff.png"}
@@ -102,6 +115,7 @@ const Loginpage = () => {
           <button
             onClick={handleForgotPassword}
             className="text-blue-600 text-sm"
+            aria-label="Forgot password"
           >
             Forgot password?
           </button>
@@ -109,6 +123,7 @@ const Loginpage = () => {
         <button
           onClick={handleLogin}
           className="w-full bg-white rounded-lg p-4 text-lg font-semibold text-gray-800 shadow-md mb-6"
+          aria-label="Log In"
         >
           Log In
         </button>
@@ -116,7 +131,7 @@ const Loginpage = () => {
           <p className="text-lg font-light text-gray-800 mb-4">
             Give your old items a second chance!
           </p>
-          <button onClick={handleCreateAccount} className="text-green-600">
+          <button onClick={handleCreateAccount} className="text-green-600" aria-label="Create an account">
             <span className="font-normal">New User? </span>
             <span className="font-medium">Create an account.</span>
           </button>
